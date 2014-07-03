@@ -18,8 +18,11 @@ fi
 
 CMD="${1:-$SHELL}"; shift
 
-echo "cd /var/lib/docker/execdriver/native/$CID && nsinit exec $CMD $*"
-sudo sh -c "cd /var/lib/docker/execdriver/native/$CID && nsinit exec $CMD $*"
-# or
-# echo cd /var/lib/docker/execdriver/native/$CID && nsinit exec $CMD "$@"
-# cd /var/lib/docker/execdriver/native/$CID && nsinit exec $CMD "$@"
+ARGS=""
+for arg in "$@"; do
+  ARGS="${ARGS}${arg// /\\ } "
+done
+ARGS=${ARGS%%?}
+
+echo "cd /var/lib/docker/execdriver/native/$CID && nsinit exec -- $CMD $ARGS"
+sudo sh -c "cd /var/lib/docker/execdriver/native/$CID && nsinit exec -- $CMD $ARGS"
