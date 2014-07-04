@@ -12,7 +12,13 @@ fi
 
 CID=$(docker inspect --format '{{.Id}}' "$ID" 2> /dev/null)
 if [ -z "$CID" ] ; then
-  print_usage >&2
+  echo "$ID: no such container is running" >&2
+  exit 1
+fi
+
+IS_RUNNING=$(docker inspect --format '{{.State.Running}}' "$ID" 2> /dev/null)
+if [ "$IS_RUNNING" != "true" ] ; then
+  echo "$ID: no such container is running" >&2
   exit 1
 fi
 
