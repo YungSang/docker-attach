@@ -24,11 +24,5 @@ fi
 
 CMD="${1:-$SHELL}"; shift
 
-ARGS=""
-for arg in "$@"; do
-  ARGS="${ARGS}${arg// /\\ } "
-done
-ARGS=${ARGS%%?}
-
-echo "cd /var/lib/docker/execdriver/native/$CID && nsinit exec -- $CMD $ARGS"
-sudo sh -c "cd /var/lib/docker/execdriver/native/$CID && nsinit exec -- $CMD $ARGS"
+echo data_path="/var/lib/docker/execdriver/native/$CID" nsinit exec -- "$CMD" "$@"
+sudo data_path="/var/lib/docker/execdriver/native/$CID" nsinit exec -- "$CMD" "$@"
