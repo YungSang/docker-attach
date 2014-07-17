@@ -4,11 +4,12 @@ print_usage() {
   echo "Usage: $(basename $0) <container id/name> [{command:-$SHELL} [argments...]]"
 }
 
-ID="$1"; shift
+ID="$1"
 if [ -z "$ID" ] ; then
   print_usage >&2
   exit 1
 fi
+shift
 
 PID=$(docker inspect --format '{{.State.Pid}}' "$ID" 2> /dev/null)
 if [ -z "$PID" -o "$PID" = "0" ] ; then

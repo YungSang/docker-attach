@@ -4,11 +4,12 @@ print_usage() {
   echo "Usage: $(basename $0) <container id/name> [{command:-$SHELL} [argments...]]"
 }
 
-ID="$1"; shift
+ID="$1"
 if [ -z "$ID" ] ; then
   print_usage >&2
   exit 1
 fi
+shift
 
 CID=$(docker inspect --format '{{.Id}}' "$ID" 2> /dev/null)
 if [ -z "$CID" ] ; then
@@ -22,7 +23,7 @@ if [ "$IS_RUNNING" != "true" ] ; then
   exit 1
 fi
 
-CMD="${1:-$SHELL}"; shift
+CMD="${1:-$SHELL}"; [ ! -z "$1" ] && shift
 
 echo data_path="/var/lib/docker/execdriver/native/$CID" nsinit exec -- "$CMD" "$@"
 sudo data_path="/var/lib/docker/execdriver/native/$CID" nsinit exec -- "$CMD" "$@"
