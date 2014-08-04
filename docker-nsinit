@@ -34,6 +34,11 @@ if [ -z "$ROOT_DIR" ] ; then
   DATA_PATH=${DATA_PATH%/*}
 else
   DATA_PATH="${ROOT_DIR%/*}/execdriver/native/$CID"
+  if ! sudo ls "$DATA_PATH" 2> /dev/null ; then
+    echo "$ID: no such container is running under the native driver" >&2
+    echo "You may be able to use nsenter instead of nsinit." >&2
+    exit 1
+  fi
 fi
 
 CMD="${1:-$SHELL}"; [ ! -z "$1" ] && shift
