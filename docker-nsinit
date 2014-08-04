@@ -23,7 +23,20 @@ if [ "$IS_RUNNING" != "true" ] ; then
   exit 1
 fi
 
+ROOT_DIR=$(docker info 2> /dev/null | sed -n "s/[ ]*Root Dir:[ ]*//gp")
+if [ -z "$ROOT_DIR" ] ; then
+  DATA_PATH=$(sudo find / -name container.json | grep "$CID")
+  if [ -z "$DATA_PATH" ] ; then
+    echo "$ID: no such container is running under the native driver" >&2
+    echo "You may be able to use nsenter instead of nsinit." >&2
+    exit 1
+  fi
+  DATA_PATH=${DATA_PATH%/*}
+else
+  DATA_PATH="${ROOT_DIR%/*}/execdriver/native/$CID"
+fi
+
 CMD="${1:-$SHELL}"; [ ! -z "$1" ] && shift
 
-echo data_path="/var/lib/docker/execdriver/native/$CID" nsinit exec -- "$CMD" "$@"
-sudo data_path="/var/lib/docker/execdriver/native/$CID" nsinit exec -- "$CMD" "$@"
+echo data_path="$DATA_PATH" nsinit exec -- "$CMD" "$@"
+sudo data_path="$DATA_PATH" nsinit exec -- "$CMD" "$@"
