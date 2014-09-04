@@ -11,19 +11,19 @@ if [ -z "$ID" ] ; then
 fi
 shift
 
-CID=$(docker inspect --format '{{.Id}}' "$ID" 2> /dev/null)
+CID=$(sudo docker inspect --format '{{.Id}}' "$ID" 2> /dev/null)
 if [ -z "$CID" ] ; then
   echo "$ID: no such container is running" >&2
   exit 1
 fi
 
-IS_RUNNING=$(docker inspect --format '{{.State.Running}}' "$ID" 2> /dev/null)
+IS_RUNNING=$(sudo docker inspect --format '{{.State.Running}}' "$ID" 2> /dev/null)
 if [ "$IS_RUNNING" != "true" ] ; then
   echo "$ID: no such container is running" >&2
   exit 1
 fi
 
-ROOT_DIR=$(docker info 2> /dev/null | sed -n "s/[ ]*Root Dir:[ ]*//gp")
+ROOT_DIR=$(sudo docker info 2> /dev/null | sed -n "s/[ ]*Root Dir:[ ]*//gp")
 if [ -z "$ROOT_DIR" ] ; then
   DATA_PATH=$(sudo find / -name container.json | grep "$CID")
   if [ -z "$DATA_PATH" ] ; then

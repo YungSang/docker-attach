@@ -11,7 +11,7 @@ if [ -z "$ID" ] ; then
 fi
 shift
 
-PID=$(docker inspect --format '{{.State.Pid}}' "$ID" 2> /dev/null)
+PID=$(sudo docker inspect --format '{{.State.Pid}}' "$ID" 2> /dev/null)
 if [ -z "$PID" -o "$PID" = "0" ] ; then
   echo "$ID: no such container is running" >&2
   exit 1
